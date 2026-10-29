@@ -153,11 +153,11 @@ code, pre {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 38px;
-  height: 38px;
-  background: linear-gradient(135deg, var(--ibm-blue-60), var(--ibm-purple-60));
+  width: 36px;
+  height: 36px;
+  background: transparent;
   border-radius: var(--radius-md);
-  box-shadow: 0 0 12px rgba(15, 98, 254, 0.4);
+  filter: drop-shadow(0 0 8px rgba(15, 98, 254, 0.4));
 }
 
 .brand-text {
