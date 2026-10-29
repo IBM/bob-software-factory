@@ -1,0 +1,980 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>IBM Bob Software Factory | Multi-Agent Autonomous Development Loop</title>
+  <meta name="description" content="Build an autonomous visual software factory in any repository with IBM Bob subagents, parallel reviews, and durable markdown state.">
+  
+  <!-- IBM Plex Sans & IBM Plex Mono Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,400;0,500;0,600;0,700;1,400&family=IBM+Plex+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400;1,600&display=swap" rel="stylesheet">
+  
+  <link rel="stylesheet" href="styles.css">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%230f62fe'/><path d='M30 40h40v20H30z' fill='%23ffffff'/><circle cx='40' cy='50' r='4' fill='%230f62fe'/><circle cx='60' cy='50' r='4' fill='%230f62fe'/><path d='M25 68h50v6H25z' fill='%2333b1ff'/></svg>">
+</head>
+<body>
+  <div class="bg-grid-overlay"></div>
+  <div class="ambient-glow"></div>
+
+  <!-- Navbar -->
+  <nav class="navbar">
+    <div class="container nav-container">
+      <a href="#" class="nav-brand">
+        <div class="brand-logo-wrap">
+          <!-- IBM Bob Logo SVG -->
+          <svg width="24" height="24" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect width="32" height="32" rx="6" fill="#0f62fe"/>
+            <!-- Robot Bob Head -->
+            <rect x="7" y="10" width="18" height="13" rx="2" fill="#ffffff"/>
+            <!-- Antenna -->
+            <path d="M16 6V10M14 6H18" stroke="#ffffff" stroke-width="1.8" stroke-linecap="round"/>
+            <!-- Eyes -->
+            <circle cx="12" cy="16.5" r="2" fill="#0f62fe"/>
+            <circle cx="20" cy="16.5" r="2" fill="#0f62fe"/>
+            <!-- Visor/Cheek line -->
+            <path d="M10 20.5H22" stroke="#1192e8" stroke-width="1.5" stroke-linecap="round"/>
+            <!-- Factory Base Bar -->
+            <rect x="5" y="25" width="22" height="2" rx="1" fill="#33b1ff"/>
+          </svg>
+        </div>
+        <div class="brand-text">
+          <div class="brand-title">
+            <span>IBM Bob</span>
+            <span class="brand-badge">Factory</span>
+          </div>
+          <span class="brand-sub">Software Factory Prompt</span>
+        </div>
+      </a>
+
+      <ul class="nav-links">
+        <li><a href="#overview">Overview</a></li>
+        <li><a href="#prompt">The Prompt</a></li>
+        <li><a href="#loop">The Loop</a></li>
+        <li><a href="#simulator">Live Demo</a></li>
+        <li><a href="#filesystem">Architecture</a></li>
+        <li><a href="#commands">Commands</a></li>
+        <li><a href="#quickstart">Quickstart</a></li>
+      </ul>
+
+      <div class="nav-actions">
+        <button class="btn btn-primary btn-sm" data-copy-target="master-prompt-raw">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+          </svg>
+          <span>Copy Prompt</span>
+        </button>
+        <a href="https://github.com/ibm/bob-software-factory" target="_blank" rel="noopener noreferrer" class="btn btn-ghost btn-sm" title="View on GitHub">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/>
+          </svg>
+          <span>GitHub</span>
+        </a>
+        <button class="mobile-toggle" aria-label="Toggle navigation">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="3" y1="12" x2="21" y2="12"></line>
+            <line x1="3" y1="6" x2="21" y2="6"></line>
+            <line x1="3" y1="18" x2="21" y2="18"></line>
+          </svg>
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Hero Section -->
+  <header class="hero-section" id="overview">
+    <div class="container">
+      <div class="hero-pill">
+        <span class="hero-pill-dot"></span>
+        <span>IBM Bob Orchestration Skill</span>
+      </div>
+      
+      <h1 class="hero-title">
+        Autonomous Software Factory<br>
+        <span class="gradient-text">in a Single Prompt</span>
+      </h1>
+      
+      <p class="hero-subtitle">
+        Transform any code repository into a visual, multi-agent assembly line. Powered by IBM Bob subagents, concurrent 4-way reviews (Security, UX, UI, Code), barrier synchronization, and durable markdown state.
+      </p>
+
+      <div class="hero-actions">
+        <button class="btn btn-primary btn-lg" data-copy-target="master-prompt-raw">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+          </svg>
+          <span>Copy Factory Prompt</span>
+        </button>
+        <a href="#simulator" class="btn btn-secondary btn-lg">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polygon points="5 3 19 12 5 21 5 3"></polygon>
+          </svg>
+          <span>Try Live Simulation</span>
+        </a>
+        <a href="#prompt" class="btn btn-ghost btn-lg">View Full Spec</a>
+      </div>
+
+      <div class="hero-features-bar">
+        <div class="hero-feature-card">
+          <div class="hero-feature-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
+            </svg>
+          </div>
+          <div class="hero-feature-text">
+            <h4>One Skill Orchestrator</h4>
+            <p>Single <code>/factory</code> skill orchestrates all subagents and writes state.</p>
+          </div>
+        </div>
+
+        <div class="hero-feature-card">
+          <div class="hero-feature-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+              <circle cx="9" cy="7" r="4"></circle>
+              <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+              <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+            </svg>
+          </div>
+          <div class="hero-feature-text">
+            <h4>4 Parallel Reviewers</h4>
+            <p>Simultaneous Security, UX, UI, and Code reviews with strict verdicts.</p>
+          </div>
+        </div>
+
+        <div class="hero-feature-card">
+          <div class="hero-feature-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
+              <line x1="8" y1="21" x2="16" y2="21"></line>
+              <line x1="12" y1="17" x2="12" y2="21"></line>
+            </svg>
+          </div>
+          <div class="hero-feature-text">
+            <h4>Visual Live Board</h4>
+            <p>Real-time self-contained dashboard polling durable <code>board.json</code>.</p>
+          </div>
+        </div>
+
+        <div class="hero-feature-card">
+          <div class="hero-feature-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+              <polyline points="14 2 14 8 20 8"></polyline>
+              <line x1="16" y1="13" x2="8" y2="13"></line>
+              <line x1="16" y1="17" x2="8" y2="17"></line>
+            </svg>
+          </div>
+          <div class="hero-feature-text">
+            <h4>File-Based State</h4>
+            <p>Zero conversation context pollution — agents communicate via markdown files.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- The Prompt Section -->
+  <section class="section" id="prompt">
+    <div class="container">
+      <div class="section-tag">Direct Prompt Artifact</div>
+      <h2 class="section-title">The Software Factory Prompt</h2>
+      <p class="section-desc">
+        Copy this prompt directly into your IBM Bob chat session or save it as a custom skill prompt. It instructs Bob to inspect your repo and construct the entire multi-agent loop, skill, agent definitions, and visual dashboard.
+      </p>
+
+      <div class="prompt-showcase-card">
+        <div class="showcase-header">
+          <div class="showcase-title-wrap">
+            <div class="window-dots">
+              <span class="window-dot dot-red"></span>
+              <span class="window-dot dot-yellow"></span>
+              <span class="window-dot dot-green"></span>
+            </div>
+            <div class="showcase-file-name">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                <polyline points="14 2 14 8 20 8"></polyline>
+              </svg>
+              <span>bob-software-factory-prompt.md</span>
+            </div>
+          </div>
+
+          <div class="showcase-actions">
+            <span class="copy-badge">~360 words · Self-contained</span>
+            <button class="btn btn-primary btn-sm" data-copy-target="master-prompt-raw">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+              </svg>
+              <span>Copy Full Prompt</span>
+            </button>
+            <a href="prompt.txt" download="bob-software-factory-prompt.txt" class="btn btn-ghost btn-sm">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                <polyline points="7 10 12 15 17 10"></polyline>
+                <line x1="12" y1="15" x2="12" y2="3"></line>
+              </svg>
+              <span>Download</span>
+            </a>
+          </div>
+        </div>
+
+        <div class="showcase-tabs">
+          <button class="tab-btn active" data-tab="tab-full-prompt">The Complete Prompt</button>
+          <button class="tab-btn" data-tab="tab-orchestrator">The Orchestrator Loop</button>
+          <button class="tab-btn" data-tab="tab-rules">Rules & State</button>
+          <button class="tab-btn" data-tab="tab-commands">Command Suite</button>
+        </div>
+
+        <!-- Tab 1: Full Prompt -->
+        <div class="tab-content active" id="tab-full-prompt">
+          <div class="code-container">
+            <pre id="master-prompt-raw">Build a simple, visual "software factory" in this repo using
+subagents, and markdown files. Keep it small: a viewer should understand the whole
+thing in a few minutes. Inspect the repo first so the agents know its language,
+test command, and conventions.
+
+## The orchestrator
+
+The factory is one skill, /factory. Whichever Bob session runs it becomes
+the orchestrator: it runs the loop below, spawns every agent, and is the only
+writer of factory/board.json.
+
+## The loop (edit this to change the factory)
+
+                   ┌──────────────────┐
+                   │     feature      │
+                   └─────────┬────────┘
+                             ▼
+                   ┌──────────────────┐
+                   │   spec-writer    │
+                   │       Bob        │
+                   └─────────┬────────┘
+                             ▼
+                   ┌──────────────────┐
+                   │     builder      │◄────────────────────┐
+                   │       Bob        │                     │
+                   └─────────┬────────┘                     │
+        ┌─────────────┬──────┴──────┬─────────────┐         │
+        ▼             ▼             ▼             ▼         │
+  ┌───────────┐ ┌───────────┐ ┌───────────┐ ┌───────────┐   │
+  │  security │ │     ux    │ │ ui design │ │    code   │   │
+  │    Bob    │ │   Bob     | │   Bob     │ │   Bob     │   │
+  └─────┬─────┘ └─────┬─────┘ └─────┬─────┘ └─────┬─────┘   │
+        └─────────────┴──────┬──────┴─────────────┘         │
+                             ▼                              │
+                   ┌──────────────────┐   any CHANGES:      │
+                   │   WAIT FOR ALL   ├─────────────────────┘
+                   │   4 reviews in   │   resume builder
+                   └─────────┬────────┘   (max 2 rounds)
+                             ▼ all PASS
+                   ┌──────────────────┐
+                   │     approver     │
+                   │       Bob        │
+                   └─┬───────────────┬┘
+             APPROVE │               │ ESCALATE
+                     ▼               ▼
+              ┌─────────────┐ ┌─────────────┐
+              │merge to main│ │ needs-human │ ◄── /factory approve
+              └─────────────┘ └─────────────┘
+
+## Target file system
+
+.bob/
+  skills/factory/SKILL.md          # the orchestrator's instructions
+  agents/                          # one file per agent in the loop
+factory/
+  board.json                       # durable state, drives the dashboard
+  dashboard.html                   # visual board, polls board.json
+  backlog.md                       # queue of features for /factory next
+  jobs/003-rate-limiting/          # one folder per job
+    spec.md
+    build.md
+    round-1/                       # one folder per review round,
+      review-security.md           # one file per reviewer
+      review-ux.md
+      review-ui.md
+      review-code.md
+    decision.md
+
+## Example files
+
+.bob/agents/&lt;name&gt;.md  (Bob subagent syntax)
+---
+name: example-agent
+description: One line on when the orchestrator should use this agent.
+tools: Read, Grep, Glob, Bash, Write
+model: sonnet
+---
+What this agent reads, what it does, and which file it writes.
+
+factory/board.json
+{ "jobs": [ { "id": "003-rate-limiting", "branch": "factory/003-rate-limiting",
+  "stage": "review", "round": 2,
+  "reviews": { "security": "CHANGES", "ux": "PASS", "ui": "pending", "code": "PASS" } } ] }
+
+## Rules
+- Agents get context from files, not the conversation, and write only their own file.
+- Each review starts with VERDICT: PASS or CHANGES; decision.md starts with
+  APPROVE or ESCALATE.
+- The builder works and commits on a feature branch (factory/&lt;job-id&gt;) and tests
+  against the spec's acceptance criteria.
+- WAIT FOR ALL: a review round is done only when every reviewer's file exists in
+  the round folder. Never resume the builder mid-round.
+- Spawn the builder with a name (builder-&lt;job-id&gt;) and resume that same builder
+  with SendMessage for each new round, pointing it at the round folder.
+
+## Commands
+/factory &lt;feature&gt;               run a new job through the loop
+/factory next                    run the first unchecked item in backlog.md
+/factory approve &lt;job-id&gt;        merge a needs-human job into main
+/factory rework &lt;job-id&gt; &lt;note&gt;  send a job back to the builder with feedback
+
+## Dashboard
+One self-contained HTML file, served with `python3 -m http.server` from factory/.
+Jobs are cards moving across the loop's stages. Each review round shows as a row
+of reviewer chips that fill in as verdicts land. needs-human jobs stand out. Click
+a card to read its markdown files. Clean and minimal.</pre>
+          </div>
+        </div>
+
+        <!-- Tab 2: The Loop -->
+        <div class="tab-content" id="tab-orchestrator">
+          <div class="code-container">
+            <pre><span class="section-hdr">## The Orchestrator (/factory)</span>
+
+Whichever Bob session runs <span class="fn">/factory</span> becomes the orchestrator.
+It runs the continuous assembly cycle:
+
+1. <span class="kw">Feature Request:</span> Allocates Job ID (e.g., <span class="str">jobs/003-rate-limiting</span>).
+2. <span class="kw">Spec Writer Bob:</span> Spawns <span class="fn">spec-writer</span> subagent -> writes <span class="str">spec.md</span>.
+3. <span class="kw">Builder Bob:</span> Spawns <span class="fn">builder-&lt;job-id&gt;</span> -> creates branch <span class="str">factory/&lt;job-id&gt;</span>, implements, tests, writes <span class="str">build.md</span>.
+4. <span class="kw">4 Parallel Reviews:</span>
+   ├─ <span class="fn">reviewer-security</span> -> <span class="str">round-N/review-security.md</span>
+   ├─ <span class="fn">reviewer-ux</span>       -> <span class="str">round-N/review-ux.md</span>
+   ├─ <span class="fn">reviewer-ui</span>       -> <span class="str">round-N/review-ui.md</span>
+   └─ <span class="fn">reviewer-code</span>     -> <span class="str">round-N/review-code.md</span>
+5. <span class="kw">WAIT FOR ALL:</span> Barrier sync until all 4 review files exist.
+6. <span class="kw">Verdict Check:</span>
+   ├─ Any <span class="str">"CHANGES"</span> & round &lt;= 2: Resume builder via SendMessage with feedback.
+   └─ All <span class="str">"PASS"</span>: Spawn <span class="fn">approver</span> -> writes <span class="str">decision.md</span> (APPROVE or ESCALATE).</pre>
+          </div>
+        </div>
+
+        <!-- Tab 3: Rules -->
+        <div class="tab-content" id="tab-rules">
+          <div class="code-container">
+            <pre><span class="section-hdr">## Factory Execution Rules</span>
+
+• <span class="kw">File-Isolated Context:</span> Agents get context from durable disk files, never chat memory.
+• <span class="kw">Single-File Writers:</span> Each subagent writes only its designated markdown file.
+• <span class="kw">Deterministic Verdicts:</span>
+  - Reviews start with <span class="str">VERDICT: PASS</span> or <span class="str">VERDICT: CHANGES</span>
+  - Decisions start with <span class="str">APPROVE</span> or <span class="str">ESCALATE</span>
+• <span class="kw">Isolated Git Branching:</span> The builder works and commits exclusively on <span class="str">factory/&lt;job-id&gt;</span>.
+• <span class="kw">Barrier Synchronization:</span> Never resume builder mid-round. Wait for all 4 review files.
+• <span class="kw">Resumable Builder:</span> Spawn builder with name <span class="fn">builder-&lt;job-id&gt;</span> and resume using <span class="fn">SendMessage</span>.</pre>
+          </div>
+        </div>
+
+        <!-- Tab 4: Commands -->
+        <div class="tab-content" id="tab-commands">
+          <div class="code-container">
+            <pre><span class="section-hdr">## CLI Commands</span>
+
+<span class="fn">/factory &lt;feature&gt;</span>
+  Run a new feature through the complete multi-agent loop.
+
+<span class="fn">/factory next</span>
+  Picks the first unchecked item in <span class="str">factory/backlog.md</span> and runs it.
+
+<span class="fn">/factory approve &lt;job-id&gt;</span>
+  Merges a <span class="str">needs-human</span> escalated job into main branch.
+
+<span class="fn">/factory rework &lt;job-id&gt; &lt;note&gt;</span>
+  Sends an escalated job back to the builder with custom human feedback.</pre>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Interactive Loop Flowchart Section -->
+  <section class="section" id="loop">
+    <div class="container">
+      <div class="section-tag">Interactive Architecture</div>
+      <h2 class="section-title">The Factory Loop</h2>
+      <p class="section-desc">
+        Click any stage below to inspect its operational model, subagent role, inputs, tools, and written artifacts.
+      </p>
+
+      <div class="loop-grid">
+        <!-- Left: Interactive Stage Selector -->
+        <div class="loop-visualizer-container">
+          <!-- Stage 1 -->
+          <div class="loop-stage-card selected" data-stage="feature">
+            <div class="stage-card-header">
+              <div class="stage-name-wrap">
+                <strong>Feature Trigger</strong>
+              </div>
+              <span class="stage-badge">ENTRY</span>
+            </div>
+            <div class="stage-agent-role">CLI: /factory &lt;feature&gt; or /factory next</div>
+          </div>
+
+          <div class="flow-connector">▼</div>
+
+          <!-- Stage 2 -->
+          <div class="loop-stage-card" data-stage="spec">
+            <div class="stage-card-header">
+              <div class="stage-name-wrap">
+                <strong>Spec-Writer Bob</strong>
+              </div>
+              <span class="stage-badge">SUBAGENT</span>
+            </div>
+            <div class="stage-agent-role">Analyzes repo patterns & creates spec.md</div>
+          </div>
+
+          <div class="flow-connector">▼</div>
+
+          <!-- Stage 3 -->
+          <div class="loop-stage-card" data-stage="builder">
+            <div class="stage-card-header">
+              <div class="stage-name-wrap">
+                <strong>Builder Bob</strong>
+              </div>
+              <span class="stage-badge">IMPLEMENTER</span>
+            </div>
+            <div class="stage-agent-role">Branch factory/&lt;id&gt;, code, test, build.md</div>
+          </div>
+
+          <div class="flow-connector">▼ (Spawns 4 Parallel Reviewers)</div>
+
+          <!-- Stage 4: 4 Reviewers -->
+          <div class="loop-stage-card" data-stage="reviews">
+            <div class="stage-card-header">
+              <div class="stage-name-wrap">
+                <strong>4 Concurrent Reviewers</strong>
+              </div>
+              <span class="stage-badge">PARALLEL</span>
+            </div>
+            <div class="parallel-reviewers-grid">
+              <div class="reviewer-chip active">
+                <span class="chip-icon">🛡️</span>
+                <span class="chip-name">Security</span>
+              </div>
+              <div class="reviewer-chip active">
+                <span class="chip-icon">🎨</span>
+                <span class="chip-name">UX</span>
+              </div>
+              <div class="reviewer-chip active">
+                <span class="chip-icon">📐</span>
+                <span class="chip-name">UI Design</span>
+              </div>
+              <div class="reviewer-chip active">
+                <span class="chip-icon">💻</span>
+                <span class="chip-name">Code</span>
+              </div>
+            </div>
+            <div class="stage-agent-role">Audits diff -> outputs VERDICT: PASS or CHANGES</div>
+          </div>
+
+          <div class="flow-connector">▼</div>
+
+          <!-- Stage 5: Wait for all -->
+          <div class="loop-stage-card" data-stage="wait">
+            <div class="stage-card-header">
+              <div class="stage-name-wrap">
+                <strong>WAIT FOR ALL (Barrier Sync)</strong>
+              </div>
+              <span class="stage-badge">SYNC GATE</span>
+            </div>
+            <div class="stage-agent-role">All 4 reviews in; if CHANGES -> resume builder (max 2 rounds)</div>
+          </div>
+
+          <div class="flow-connector">▼ (All PASS)</div>
+
+          <!-- Stage 6: Approver -->
+          <div class="loop-stage-card" data-stage="approver">
+            <div class="stage-card-header">
+              <div class="stage-name-wrap">
+                <strong>Approver Bob</strong>
+              </div>
+              <span class="stage-badge">DECISION</span>
+            </div>
+            <div class="stage-agent-role">Writes decision.md (APPROVE or ESCALATE)</div>
+          </div>
+
+          <div class="flow-connector">▼</div>
+
+          <!-- Stage 7: Resolution -->
+          <div class="loop-stage-card" data-stage="resolution">
+            <div class="stage-card-header">
+              <div class="stage-name-wrap">
+                <strong>Merge to Main OR Needs-Human</strong>
+              </div>
+              <span class="stage-badge">DISPOSITION</span>
+            </div>
+            <div class="stage-agent-role">Auto-merge or human intervention via /factory approve</div>
+          </div>
+        </div>
+
+        <!-- Right: Detail Panel -->
+        <div class="stage-detail-panel">
+          <div class="detail-header">
+            <div class="detail-title" id="detail-stage-title">1. Feature Ingestion</div>
+            <span class="stage-badge" id="detail-stage-badge">INPUT</span>
+          </div>
+          
+          <p class="detail-desc" id="detail-stage-desc">
+            The factory loop begins with a feature request. The orchestrator accepts user input either from the CLI command <code>/factory &lt;feature&gt;</code> or by picking the next unchecked item from <code>factory/backlog.md</code>.
+          </p>
+
+          <div class="detail-meta-box">
+            <div class="detail-meta-row">
+              <span class="detail-meta-label">Agent Role:</span>
+              <span class="detail-meta-val" id="detail-stage-role">Orchestrator Skill (/factory)</span>
+            </div>
+            <div class="detail-meta-row">
+              <span class="detail-meta-label">Tools Used:</span>
+              <span class="detail-meta-val" id="detail-stage-tools">Skill Activation, Read backlog.md, Write board.json</span>
+            </div>
+            <div class="detail-meta-row">
+              <span class="detail-meta-label">Input Source:</span>
+              <span class="detail-meta-val" id="detail-stage-reads">User prompt OR factory/backlog.md</span>
+            </div>
+            <div class="detail-meta-row">
+              <span class="detail-meta-label">Output Target:</span>
+              <span class="detail-meta-val" id="detail-stage-writes">factory/board.json (allocates job-id)</span>
+            </div>
+          </div>
+
+          <div style="font-size: 0.85rem; color: var(--text-muted); line-height: 1.5;">
+            💡 <em>Tip: Select any step in the flowchart to see the prompt parameters and agent responsibilities.</em>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Live Factory Simulator Section -->
+  <section class="section" id="simulator">
+    <div class="container">
+      <div class="section-tag">Interactive Preview</div>
+      <h2 class="section-title">Factory Board Simulation</h2>
+      <p class="section-desc">
+        Experience how <code>factory/dashboard.html</code> and <code>board.json</code> work together in real-time. Trigger a new simulated feature or inspect active jobs and review verdict chips.
+      </p>
+
+      <div class="simulator-card">
+        <div class="sim-toolbar">
+          <div class="sim-status-indicator">
+            <span class="sim-pulse"></span>
+            <span>Orchestrator Online · Polling <code>board.json</code></span>
+          </div>
+
+          <div class="sim-controls">
+            <button class="btn btn-primary btn-sm" id="sim-run-btn">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polygon points="5 3 19 12 5 21 5 3"></polygon>
+              </svg>
+              <span>+ Run /factory "Prometheus Telemetry"</span>
+            </button>
+            <button class="btn btn-ghost btn-sm" id="sim-reset-btn">Reset Board</button>
+          </div>
+        </div>
+
+        <div class="sim-board">
+          <!-- Col: Spec -->
+          <div class="sim-column">
+            <div class="sim-col-header">
+              <span>1. Specification</span>
+              <span class="sim-col-count" id="sim-count-spec">0</span>
+            </div>
+            <div class="sim-col-body" id="sim-col-spec"></div>
+          </div>
+
+          <!-- Col: Build -->
+          <div class="sim-column">
+            <div class="sim-col-header">
+              <span>2. In Build</span>
+              <span class="sim-col-count" id="sim-count-build">0</span>
+            </div>
+            <div class="sim-col-body" id="sim-col-build"></div>
+          </div>
+
+          <!-- Col: Review -->
+          <div class="sim-column">
+            <div class="sim-col-header">
+              <span>3. Parallel Review</span>
+              <span class="sim-col-count" id="sim-count-review">1</span>
+            </div>
+            <div class="sim-col-body" id="sim-col-review"></div>
+          </div>
+
+          <!-- Col: Needs Human -->
+          <div class="sim-column">
+            <div class="sim-col-header">
+              <span>4. Needs Human</span>
+              <span class="sim-col-count" id="sim-count-needs-human">1</span>
+            </div>
+            <div class="sim-col-body" id="sim-col-human"></div>
+          </div>
+
+          <!-- Col: Merged -->
+          <div class="sim-column">
+            <div class="sim-col-header">
+              <span>5. Merged to Main</span>
+              <span class="sim-col-count" id="sim-count-merged">2</span>
+            </div>
+            <div class="sim-col-body" id="sim-col-merged"></div>
+          </div>
+        </div>
+
+        <div class="sim-terminal-log" id="sim-log">
+          <div class="sim-log-entry"><span class="sim-log-time">[INIT]</span> <span class="sim-log-tag">[FACTORY]</span> Orchestrator loaded board.json with 4 active jobs.</div>
+          <div class="sim-log-entry"><span class="sim-log-time">[INFO]</span> <span class="sim-log-tag">[REVIEWER]</span> Job 003-rate-limiting round 2: 3 of 4 reviews registered. Waiting for ui review.</div>
+          <div class="sim-log-entry"><span class="sim-log-time">[ALERT]</span> <span class="sim-log-tag">[APPROVER]</span> Job 004-cors-policy routed to needs-human after round 2 conflict.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Target File System Explorer -->
+  <section class="section" id="filesystem">
+    <div class="container">
+      <div class="section-tag">Architecture & Disk Layout</div>
+      <h2 class="section-title">Target File System</h2>
+      <p class="section-desc">
+        The factory builds clean, file-based primitives directly in your repository. Click any file in the tree below to inspect its role and format.
+      </p>
+
+      <div class="fs-grid">
+        <div class="fs-tree-sidebar">
+          <div class="fs-tree-title">Repository Structure</div>
+          <ul class="fs-tree-list">
+            <li class="fs-item active" data-file="skill">
+              <span>📄</span> .bob/skills/factory/SKILL.md
+            </li>
+            <li class="fs-item" data-file="agent-spec">
+              <span>🤖</span> .bob/agents/spec-writer.md
+            </li>
+            <li class="fs-item" data-file="agent-builder">
+              <span>🤖</span> .bob/agents/builder.md
+            </li>
+            <li class="fs-item" data-file="agent-reviewer">
+              <span>🤖</span> .bob/agents/reviewer-security.md
+            </li>
+            <li class="fs-item" data-file="agent-approver">
+              <span>🤖</span> .bob/agents/approver.md
+            </li>
+            <li class="fs-item" data-file="board-json">
+              <span>📊</span> factory/board.json
+            </li>
+            <li class="fs-item" data-file="dashboard-html">
+              <span>🌐</span> factory/dashboard.html
+            </li>
+            <li class="fs-item" data-file="backlog-md">
+              <span>📋</span> factory/backlog.md
+            </li>
+          </ul>
+        </div>
+
+        <div class="fs-preview-pane">
+          <div class="fs-preview-header">
+            <div class="fs-preview-path" id="fs-selected-path">.bob/skills/factory/SKILL.md</div>
+            <button class="btn btn-ghost btn-sm" data-copy-target="fs-code-content">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+              </svg>
+              <span>Copy File</span>
+            </button>
+          </div>
+          <div class="fs-preview-purpose" id="fs-selected-purpose">
+            The brain of the factory. Orchestrator instructions that define the state loop, agent dispatch rules, board.json writing permissions, and CLI command handlers.
+          </div>
+          <div class="code-container" style="max-height: 380px;">
+            <pre id="fs-code-content">---
+name: factory
+description: Orchestrates an autonomous multi-agent software factory with parallel reviews and durable markdown state.
+---
+# Factory Orchestrator
+
+1. Inspect the repo to discover package manager, test scripts, and coding style.
+2. Initialize or load factory/board.json.
+3. For each job:
+   - Spawn spec-writer -> factory/jobs/<id>/spec.md
+   - Spawn builder (builder-<id>) -> creates branch, writes code & build.md
+   - Concurrently spawn 4 reviewers (security, ux, ui, code) into round-N/
+   - WAIT FOR ALL 4 review files.
+   - If any CHANGES and round <= 2: SendMessage to builder-<id> and repeat.
+   - Spawn approver -> factory/jobs/<id>/decision.md
+   - If APPROVE: merge branch to main; If ESCALATE: mark needs-human.</pre>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Commands Reference -->
+  <section class="section" id="commands">
+    <div class="container">
+      <div class="section-tag">CLI Reference</div>
+      <h2 class="section-title">Factory Commands</h2>
+      <p class="section-desc">
+        Control your software factory with four intuitive commands directly in IBM Bob.
+      </p>
+
+      <div class="commands-grid">
+        <div class="command-card">
+          <div>
+            <div class="command-syntax-box">
+              <span>/factory &lt;feature&gt;</span>
+              <button class="btn btn-ghost btn-icon btn-sm" data-copy-text="/factory " title="Copy command">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+              </button>
+            </div>
+            <div class="command-desc">
+              Executes a brand-new feature request through the entire factory loop: spec generation, isolated branch build, 4 parallel reviews, and approval.
+            </div>
+          </div>
+          <div>
+            <div class="command-example-label">Example</div>
+            <div class="command-example">/factory add JWT refresh token rotation</div>
+          </div>
+        </div>
+
+        <div class="command-card">
+          <div>
+            <div class="command-syntax-box">
+              <span>/factory next</span>
+              <button class="btn btn-ghost btn-icon btn-sm" data-copy-text="/factory next" title="Copy command">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+              </button>
+            </div>
+            <div class="command-desc">
+              Pops the first unchecked task from <code>factory/backlog.md</code>, runs it through the loop, and marks it checked upon successful merge.
+            </div>
+          </div>
+          <div>
+            <div class="command-example-label">Example</div>
+            <div class="command-example">/factory next</div>
+          </div>
+        </div>
+
+        <div class="command-card">
+          <div>
+            <div class="command-syntax-box">
+              <span>/factory approve &lt;job-id&gt;</span>
+              <button class="btn btn-ghost btn-icon btn-sm" data-copy-text="/factory approve " title="Copy command">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+              </button>
+            </div>
+            <div class="command-desc">
+              Human override command. Merges an escalated <code>needs-human</code> job's branch into <code>main</code> after manual review.
+            </div>
+          </div>
+          <div>
+            <div class="command-example-label">Example</div>
+            <div class="command-example">/factory approve 004-cors-policy</div>
+          </div>
+        </div>
+
+        <div class="command-card">
+          <div>
+            <div class="command-syntax-box">
+              <span>/factory rework &lt;id&gt; &lt;note&gt;</span>
+              <button class="btn btn-ghost btn-icon btn-sm" data-copy-text="/factory rework " title="Copy command">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+              </button>
+            </div>
+            <div class="command-desc">
+              Sends an escalated or rejected job back to the builder agent with specific human guidance notes.
+            </div>
+          </div>
+          <div>
+            <div class="command-example-label">Example</div>
+            <div class="command-example">/factory rework 003-rate-limiting "Use Redis sorted sets"</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Core Rules & Principles -->
+  <section class="section" id="rules">
+    <div class="container">
+      <div class="section-tag">Engineering Discipline</div>
+      <h2 class="section-title">Factory Rules & Principles</h2>
+      <p class="section-desc">
+        Why this design produces reliable, verifiable code without hallucinated loop drift or context window exhaustion.
+      </p>
+
+      <div class="rules-grid">
+        <div class="rule-card">
+          <div class="rule-icon">📁</div>
+          <div class="rule-content">
+            <h4>File-Isolated Context</h4>
+            <p>Subagents never rely on ephemeral conversation memory. Every input is read from disk (<code>spec.md</code>, git diff), and every verdict is written to its own designated markdown file.</p>
+          </div>
+        </div>
+
+        <div class="rule-card">
+          <div class="rule-icon">🛡️</div>
+          <div class="rule-content">
+            <h4>Deterministic Verdicts</h4>
+            <p>Every review file strictly begins with <code>VERDICT: PASS</code> or <code>VERDICT: CHANGES</code>. <code>decision.md</code> begins with <code>APPROVE</code> or <code>ESCALATE</code>. No ambiguous summaries.</p>
+          </div>
+        </div>
+
+        <div class="rule-card">
+          <div class="rule-icon">🛑</div>
+          <div class="rule-content">
+            <h4>Strict Barrier Synchronization</h4>
+            <p><strong>WAIT FOR ALL:</strong> The orchestrator will never resume the builder mid-round. A round is only closed when all 4 review files (Security, UX, UI, Code) exist on disk.</p>
+          </div>
+        </div>
+
+        <div class="rule-card">
+          <div class="rule-icon">🔄</div>
+          <div class="rule-content">
+            <h4>Resumable Subagents</h4>
+            <p>The builder is spawned as <code>builder-&lt;job-id&gt;</code> and resumed with <code>SendMessage</code> pointing to the new review round folder, preserving its local branch context.</p>
+          </div>
+        </div>
+
+        <div class="rule-card">
+          <div class="rule-icon">👥</div>
+          <div class="rule-content">
+            <h4>Human-in-the-Loop Safeguard</h4>
+            <p>If reviewers request changes after 2 rounds, or if an architectural conflict arises, the job automatically routes to <code>needs-human</code> on the dashboard for approval or rework.</p>
+          </div>
+        </div>
+
+        <div class="rule-card">
+          <div class="rule-icon">🌿</div>
+          <div class="rule-content">
+            <h4>Isolated Feature Branches</h4>
+            <p>Builders work strictly on <code>factory/&lt;job-id&gt;</code> branches. The main branch remains protected and production-ready until final approval.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Quickstart Guide -->
+  <section class="section" id="quickstart">
+    <div class="container">
+      <div class="section-tag">Get Started in 60 Seconds</div>
+      <h2 class="section-title">Run It In Your Repository</h2>
+      <p class="section-desc">
+        Set up the IBM Bob Software Factory in 3 simple steps.
+      </p>
+
+      <div class="quickstart-steps">
+        <div class="step-card">
+          <div class="step-num">1</div>
+          <div class="step-content">
+            <h3>Open Your Repository in IBM Bob</h3>
+            <p>Launch IBM Bob in your workspace. Bob will inspect your repository's build files, language, and testing frameworks.</p>
+            <div class="step-code-snippet">
+              <span>bob --workspace .</span>
+              <button class="btn btn-ghost btn-sm" data-copy-text="bob --workspace .">Copy</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="step-card">
+          <div class="step-num">2</div>
+          <div class="step-content">
+            <h3>Paste the Factory Prompt</h3>
+            <p>Paste the factory prompt into your Bob chat session or save it into <code>.bob/prompts/factory.md</code>. Bob will scaffold the skill, agents, and dashboard.</p>
+            <div class="step-code-snippet">
+              <span># Click "Copy Prompt" at the top of this page</span>
+              <button class="btn btn-primary btn-sm" data-copy-target="master-prompt-raw">Copy Prompt</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="step-card">
+          <div class="step-num">3</div>
+          <div class="step-content">
+            <h3>Launch Features & View the Dashboard</h3>
+            <p>Run your first feature and start the local Python web server to watch your software factory live on your screen.</p>
+            <div class="step-code-snippet">
+              <span>/factory "add rate limiting" && python3 -m http.server -d factory/ 8080</span>
+              <button class="btn btn-ghost btn-sm" data-copy-text="/factory 'add rate limiting' && python3 -m http.server -d factory/ 8080">Copy</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-top">
+        <div class="footer-brand">
+          <div class="brand-title" style="font-size: 1.15rem; margin-bottom: 8px;">
+            <svg width="20" height="20" viewBox="0 0 32 32" fill="none">
+              <rect width="32" height="32" rx="6" fill="#0f62fe"/>
+              <rect x="7" y="10" width="18" height="13" rx="2" fill="#ffffff"/>
+              <circle cx="12" cy="16.5" r="2" fill="#0f62fe"/>
+              <circle cx="20" cy="16.5" r="2" fill="#0f62fe"/>
+            </svg>
+            <span>IBM Bob Software Factory</span>
+          </div>
+          <p>
+            An autonomous, multi-agent development assembly line powered by IBM Bob subagents, parallel reviews, and durable markdown state.
+          </p>
+        </div>
+
+        <div class="footer-links-group">
+          <div class="footer-col">
+            <h5>Navigation</h5>
+            <ul>
+              <li><a href="#overview">Overview</a></li>
+              <li><a href="#prompt">The Prompt</a></li>
+              <li><a href="#loop">The Loop</a></li>
+              <li><a href="#simulator">Live Demo</a></li>
+            </ul>
+          </div>
+
+          <div class="footer-col">
+            <h5>Architecture</h5>
+            <ul>
+              <li><a href="#filesystem">File System</a></li>
+              <li><a href="#commands">Commands</a></li>
+              <li><a href="#rules">Rules & Principles</a></li>
+              <li><a href="#quickstart">Quickstart</a></li>
+            </ul>
+          </div>
+
+          <div class="footer-col">
+            <h5>Resources</h5>
+            <ul>
+              <li><a href="https://ibm.github.io/bob-software-factory" target="_blank" rel="noopener noreferrer">Live Site</a></li>
+              <li><a href="https://github.com/ibm/bob-software-factory" target="_blank" rel="noopener noreferrer">GitHub Repository</a></li>
+              <li><a href="prompt.txt" download="bob-software-factory-prompt.txt">Download Prompt (.txt)</a></li>
+              <li><a href="prompt.md" download="bob-software-factory-prompt.md">Download Prompt (.md)</a></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <div>&copy; 2026 IBM Bob Software Factory · Open Source</div>
+        <div>Hosted at <a href="https://ibm.github.io/bob-software-factory" style="color: var(--ibm-cyan-40);">ibm.github.io/bob-software-factory</a></div>
+      </div>
+    </div>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>

@@ -1,0 +1,56 @@
+{
+  "jobs": [
+    {
+      "id": "001-user-auth",
+      "title": "Add GitHub OAuth Login",
+      "branch": "factory/001-user-auth",
+      "stage": "merged",
+      "round": 1,
+      "reviews": {
+        "security": "PASS",
+        "ux": "PASS",
+        "ui": "PASS",
+        "code": "PASS"
+      }
+    },
+    {
+      "id": "002-api-caching",
+      "title": "Redis Response Cache",
+      "branch": "factory/002-api-caching",
+      "stage": "merged",
+      "round": 2,
+      "reviews": {
+        "security": "PASS",
+        "ux": "PASS",
+        "ui": "PASS",
+        "code": "PASS"
+      }
+    },
+    {
+      "id": "003-rate-limiting",
+      "title": "Sliding Window Rate Limiter",
+      "branch": "factory/003-rate-limiting",
+      "stage": "review",
+      "round": 2,
+      "reviews": {
+        "security": "CHANGES",
+        "ux": "PASS",
+        "ui": "pending",
+        "code": "PASS"
+      }
+    },
+    {
+      "id": "004-cors-policy",
+      "title": "Strict CORS Whitelist Header",
+      "branch": "factory/004-cors-policy",
+      "stage": "needs-human",
+      "round": 2,
+      "reviews": {
+        "security": "CHANGES",
+        "ux": "PASS",
+        "ui": "PASS",
+        "code": "CHANGES"
+      }
+    }
+  ]
+}
