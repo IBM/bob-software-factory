@@ -153,11 +153,49 @@ code, pre {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 36px;
-  height: 36px;
+  width: 38px;
+  height: 38px;
   background: transparent;
   border-radius: var(--radius-md);
-  filter: drop-shadow(0 0 8px rgba(15, 98, 254, 0.4));
+}
+
+.brand-bob-img {
+  width: 38px;
+  height: 38px;
+  object-fit: contain;
+  filter: drop-shadow(0 0 8px rgba(15, 98, 254, 0.5));
+  transition: transform 0.2s ease;
+}
+
+.nav-brand:hover .brand-bob-img {
+  transform: scale(1.08) rotate(-2deg);
+}
+
+.hero-bob-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+.hero-bob-avatar {
+  width: 110px;
+  height: 110px;
+  object-fit: contain;
+  filter: drop-shadow(0 0 24px rgba(15, 98, 254, 0.65));
+  animation: bob-float 4s ease-in-out infinite;
+}
+
+@keyframes bob-float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
+
+.footer-bob-img {
+  width: 32px;
+  height: 32px;
+  object-fit: contain;
+  filter: drop-shadow(0 0 6px rgba(15, 98, 254, 0.4));
 }
 
 .brand-text {
