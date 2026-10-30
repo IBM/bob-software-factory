@@ -234,6 +234,15 @@
       }
     }
 
+    function escapeHtml(value) {
+      return String(value)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+    }
+
     function render(jobs) {
       const cols = {
         spec: document.getElementById('col-spec'),
@@ -258,18 +267,18 @@
         if (job.reviews) {
           chips = `
             <div class="reviews-row">
-              <span class="rev-chip ${job.reviews.security.toLowerCase()}">SEC:${job.reviews.security}</span>
-              <span class="rev-chip ${job.reviews.ux.toLowerCase()}">UX:${job.reviews.ux}</span>
-              <span class="rev-chip ${job.reviews.ui.toLowerCase()}">UI:${job.reviews.ui}</span>
-              <span class="rev-chip ${job.reviews.code.toLowerCase()}">CODE:${job.reviews.code}</span>
+              <span class="rev-chip ${escapeHtml(job.reviews.security).toLowerCase()}">SEC:${escapeHtml(job.reviews.security)}</span>
+              <span class="rev-chip ${escapeHtml(job.reviews.ux).toLowerCase()}">UX:${escapeHtml(job.reviews.ux)}</span>
+              <span class="rev-chip ${escapeHtml(job.reviews.ui).toLowerCase()}">UI:${escapeHtml(job.reviews.ui)}</span>
+              <span class="rev-chip ${escapeHtml(job.reviews.code).toLowerCase()}">CODE:${escapeHtml(job.reviews.code)}</span>
             </div>
           `;
         }
 
         card.innerHTML = `
-          <div class="job-id">${job.id} ${job.round ? '· Round ' + job.round : ''}</div>
-          <div class="job-title">${job.title || job.id}</div>
-          <div style="font-size: 0.72rem; color: var(--muted); font-family: 'IBM Plex Mono', monospace;">branch: ${job.branch}</div>
+          <div class="job-id">${escapeHtml(job.id)} ${job.round ? '· Round ' + escapeHtml(job.round) : ''}</div>
+          <div class="job-title">${escapeHtml(job.title || job.id)}</div>
+          <div style="font-size: 0.72rem; color: var(--muted); font-family: 'IBM Plex Mono', monospace;">branch: ${escapeHtml(job.branch)}</div>
           ${chips}
         `;
 

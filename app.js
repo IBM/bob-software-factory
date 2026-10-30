@@ -11,6 +11,16 @@ document.addEventListener('DOMContentLoaded', () => {
   initMobileNav();
 });
 
+// Escape a value for safe interpolation into HTML
+function escapeHtml(value) {
+  return String(value)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
 // Toast notification helper
 function showToast(message, type = 'info') {
   let container = document.querySelector('.toast-container');
@@ -26,8 +36,10 @@ function showToast(message, type = 'info') {
     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
       <path d="M20 6L9 17l-5-5"/>
     </svg>
-    <span>${message}</span>
+    <span></span>
   `;
+  // Use textContent so DOM-derived message text is never parsed as HTML
+  toast.querySelector('span').textContent = message;
 
   container.appendChild(toast);
 
@@ -50,7 +62,7 @@ function initCopyButtons() {
       const text = targetElem.innerText || targetElem.textContent;
       try {
         await navigator.clipboard.writeText(text.trim());
-        const originalText = btn.innerHTML;
+        const originalNodes = Array.from(btn.childNodes);
         btn.innerHTML = `
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
             <polyline points="20 6 9 17 4 12"></polyline>
@@ -59,7 +71,7 @@ function initCopyButtons() {
         btn.classList.add('btn-copied');
         showToast('Prompt copied to clipboard!');
         setTimeout(() => {
-          btn.innerHTML = originalText;
+          btn.replaceChildren(...originalNodes);
           btn.classList.remove('btn-copied');
         }, 2200);
       } catch (err) {
@@ -410,7 +422,13 @@ function initSimulator() {
     const time = new Date().toLocaleTimeString();
     const entry = document.createElement('div');
     entry.className = 'sim-log-entry';
-    entry.innerHTML = `<span class="sim-log-time">[${time}]</span> <span class="sim-log-tag">[${tag}]</span> ${msg}`;
+    const timeEl = document.createElement('span');
+    timeEl.className = 'sim-log-time';
+    timeEl.textContent = `[${time}]`;
+    const tagEl = document.createElement('span');
+    tagEl.className = 'sim-log-tag';
+    tagEl.textContent = `[${tag}]`;
+    entry.append(timeEl, ' ', tagEl, ` ${msg}`);
     logEl.appendChild(entry);
     logEl.scrollTop = logEl.scrollHeight;
   }
@@ -443,17 +461,17 @@ function initSimulator() {
       if (job.reviews) {
         reviewsHtml = `
           <div class="sim-reviews-row">
-            <span class="sim-rev-chip ${job.reviews.security}">SEC: ${job.reviews.security}</span>
-            <span class="sim-rev-chip ${job.reviews.ux}">UX: ${job.reviews.ux}</span>
-            <span class="sim-rev-chip ${job.reviews.ui}">UI: ${job.reviews.ui}</span>
-            <span class="sim-rev-chip ${job.reviews.code}">CODE: ${job.reviews.code}</span>
+            <span class="sim-rev-chip ${escapeHtml(job.reviews.security)}">SEC: ${escapeHtml(job.reviews.security)}</span>
+            <span class="sim-rev-chip ${escapeHtml(job.reviews.ux)}">UX: ${escapeHtml(job.reviews.ux)}</span>
+            <span class="sim-rev-chip ${escapeHtml(job.reviews.ui)}">UI: ${escapeHtml(job.reviews.ui)}</span>
+            <span class="sim-rev-chip ${escapeHtml(job.reviews.code)}">CODE: ${escapeHtml(job.reviews.code)}</span>
           </div>
         `;
       }
 
       card.innerHTML = `
-        <div class="sim-job-id">${job.id} · R${job.round}</div>
-        <div class="sim-job-title">${job.title}</div>
+        <div class="sim-job-id">${escapeHtml(job.id)} · R${escapeHtml(job.round)}</div>
+        <div class="sim-job-title">${escapeHtml(job.title)}</div>
         ${reviewsHtml}
       `;
 
